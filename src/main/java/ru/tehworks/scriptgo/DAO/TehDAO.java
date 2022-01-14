@@ -190,7 +190,7 @@ public class TehDAO {
     public ResultSet getListQuery(){
         try {
             Statement statement = connection.createStatement();
-            String SQL = "SELECT id, car, placeOfLoading, placeOfDelivery, shipmentStart, shipmentEnd, loading, unloading, SummInNDS  FROM request WHERE COL_CHECK = 1550 or COL_CHECK = 1553";
+            String SQL = "SELECT id, car, placeOfLoading, placeOfDelivery, shipmentStart, shipmentEnd, loading, unloading, SummInNDS  FROM request WHERE COL_CHECK = 1550";
             ResultSet resultSet = statement.executeQuery(SQL);
             return resultSet;
         } catch (SQLException throwables) {
