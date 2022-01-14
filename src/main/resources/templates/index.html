@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <link data-th-href="@{/css/bootstrap.min.css}" rel="stylesheet">
+
+    <title>Title</title>
+
+    <script type="text/javascript">
+        function validateForm() {
+            val = true;
+            if(document.querySelector("#Car").value == ""){
+                alert("CAR NOT!!!");
+                val = false
+            }
+            return val;
+        }
+    </script>
+</head>
+<body>
+<div class="container">
+    <div class="row justify-content-md-center">
+        <div class="col">
+            <div class="row" style="border: 1px solid #dee2e6">
+                <nav class="navbar navbar-expand-lg navbar-light navbar-dark bg-primary" border="1">
+                    <div class="container-fluid">
+                        <div class="collapse navbar-collapse" id="navbarNav">
+                            <ul class="navbar-nav">
+                                <li class="nav-item">
+                                    <a class="nav-link active" aria-current="page" href="#"><b>Главная</b></a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+            <div class="row" style="margin-top: 10px">
+                <form method="POST" action="/" data-th-object="${dataBaseLite}" onsubmit="return validateForm()">
+                    <div class="row char row-cols-5">
+                        <div class="col" style="display: none;">
+                            <input type="text" class="form-control form-control-sm" style="display: none;" data-th-field="*{{id}}" id = "Ids" >
+                        </div>
+                        <div class="col">
+                            <label for="Car">Машина</label>
+                            <input type="text" class="form-control form-control-sm" data-th-field="*{{car}}" id = "Car" required>
+                        </div>
+                        <div class="col">
+                            <label for="PlaceOfLoading">Место погрузки</label>
+                            <input type="text" class="form-control form-control-sm" data-th-field="*{{placeOfLoading}}" id = "PlaceOfLoading" required>
+                        </div>
+                        <div class="col">
+                            <label for="PlaceOfDelivery">Место доставки</label>
+                            <input type="text" class="form-control form-control-sm" data-th-field="*{{placeOfDelivery}}" id = "PlaceOfDelivery" required>
+                        </div>
+
+                        <div class="col">
+                            <label for="Loading">Погрузка</label>
+                            <input type="text" class="form-control form-control-sm" data-th-field="*{{loading}}" id = "Loading">
+                        </div>
+                        <div class="col">
+                            <label for="Unloading">Разгрузка</label>
+                            <input type="text" class="form-control form-control-sm" data-th-field="*{{unloading}}" id = "Unloading">
+                        </div>
+                        <div class="col">
+                            <label for="NDS">Сумма с НДС</label>
+                            <input type="text" class="form-control form-control-sm" data-th-field="*{{NDS}}" id = "NDS" required>
+                        </div>
+                        <div class="col">
+                            <label for="ShipmentStart">Отгрузка: от</label>
+                            <input type="date" class="form-control form-control-sm" data-th-field="*{{shipmentStart}}" id = "ShipmentStart" required>
+                        </div>
+                        <div class="col">
+                            <label for="ShipmentEnd">до</label>
+                            <input type="date" class="form-control form-control-sm" data-th-field="*{{shipmentEnd}}" id="ShipmentEnd">
+                        </div>
+                        <div class="col"></div>
+                        <div class="col align-self-end">
+                             <button type="button" id="getreport" class="btn btn-light btn-primary" style="border: 1px solid #dee2e6;" >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                                    <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                                    <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
+                                </svg>
+                            </button>
+                            <button type="button" id="btn-update" class="btn btn-light btn-primary" style="border: 1px solid #dee2e6;" onclick="window.location.reload()">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-arrow-repeat" viewBox="0 0 16 16">
+                                <path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z"/>
+                                <path fill-rule="evenodd" d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z"/>
+                                </svg>
+                            </button>
+
+                                <button type="button" id="getbtnNone" class="btn btn-light btn-primary" style="border: 1px solid #dee2e6;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                        <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                                        <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                                    </svg>
+                                </button>
+
+                            <button type="submit" id="getbtn" class="btn btn-primary" style="border: 1px solid #dee2e6; float: right;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-plus-lg" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="row" style="margin-top: 10px;" >
+                <table class="table table-sm table-bordered">
+                    <thead>
+                    <tr class="table-primary">
+                        <th scope="col" rowspan="2"></th>
+                        <th scope="col" rowspan="2">Номер</th>
+                        <th scope="col" rowspan="2">Номер заявки</th>
+                        <th scope="col" rowspan="2">Машина</th>
+                        <th scope="col" rowspan="2">Место погрузки</th>
+                        <th scope="col" rowspan="2">Место доставки</th>
+                        <th scope="col" colspan="2">Отгрузка</th>
+                        <th scope="col" rowspan="2">Погрузка</th>
+                        <th scope="col" rowspan="2">Разгрузка</th>
+                        <th scope="col" rowspan="2">Сумма с НДС</th>
+                    </tr>
+                    <tr class="table-primary">
+                        <th scope="col">от</th>
+                        <th scope="col">до</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr data-th-each="row : ${rows}">
+                        <td id="tdD" style="display: none;">[[${row.getColCheck()}]]</td>
+                        <td id="tdCheck"><input type="checkbox" class="form-check-input" id="CheckOne" style="margin-right: 5px;"></td>
+                        <td>[[${row.getId()}]]</td>
+                        <td>[[${row.getNumTask()}]]</td>
+                        <td>[[${row.getCar()}]]</td>
+                        <td>[[${row.getPlaceOfLoading()}]]</td>
+                        <td>[[${row.getPlaceOfDelivery()}]]</td>
+                        <td>[[${row.getShipmentStart()}]]</td>
+                        <td>[[${row.getShipmentEnd()}]]</td>
+                        <td>[[${row.getLoading()}]]</td>
+                        <td>[[${row.getUnloading()}]]</td>
+                        <td>[[${row.getNDS()}]]</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="row">
+                <div class="col" style="margin-top: 10px;margin-bottom: 10px;">
+                    <div data-th-each="error : ${errors.getjErr()}">
+                        <div class="alert alert-danger error_col" role="alert" style="padding: 5px 5px 5px 5px; margin-bottom: 0;">[[${error}]]</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<style type="text/css">
+    .table {
+        border-collapse: collapse;
+        border-spacing: 0;
+        width: 100%;
+    }
+    .table th, .table td {
+        border: 1px solid #888;
+        padding: 10px;
+        text-align: center;
+        vertical-align: middle;
+        position: relative;
+        cursor: pointer;
+    }
+
+    /* Hover */
+    .table .hover td:after {
+        content: '';
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        bottom: 0px;
+        left: 0px;
+        width: 105%;
+        border-top: 3px solid #0dcaf0;
+        border-bottom: 3px solid #0dcaf0;
+    }
+    .table .hover td:first-child:after {
+        border-left: 3px solid #0dcaf0;
+    }
+    .table .hover td:last-child:after {
+        border-right: 3px solid #0dcaf0;
+        width: auto;
+    }
+
+    /* Click */
+    .table .activeTableTab td:after {
+        content: '';
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        bottom: 0px;
+        left: 0px;
+        width: 105%;
+        border-top: 3px solid #0d6efd;
+        border-bottom: 3px solid #0d6efd;
+    }
+    .table .activeTableTab td:first-child:after {
+        border-left: 3px solid #0d6efd;
+    }
+    .table .activeTableTab td:last-child:after {
+        border-right: 3px solid #0d6efd;
+        width: auto;
+    }
+
+    @media (max-width: 1400px) {
+        .bi{
+            width: 16px;
+            height: 16px;
+            margin-left: -2px;
+            margin-top: -10px;
+        }
+        .btn{
+            width: 38px;
+            height: 31px;
+        }
+    }
+    @media (max-width: 992px) {
+        .bi{
+            width: 16px;
+            height: 16px;
+            margin-left: -6px;
+            margin-top: -10px;
+        }
+        .btn{
+            width: 28px;
+            height: 31px;
+        }
+        body {
+            font-size: 12px;
+        }
+    }
+</style>
+<script data-th-src="@{/css/jquery-3.6.0.min.js}"></script>
+<script data-th-inline="javascript">
+    $(document).ready(function() {
+        var mgs = /*[[${errors.getError()}]]*/
+
+        $('#getbtnNone').click(
+            function () {
+                console.log($('.activeTableTab').children('td').eq(2).text())
+                let id = $('.activeTableTab').children('td').eq(2).text()
+                console.log(id)
+                let xhr = new XMLHttpRequest();
+                let param = 'id=' + encodeURIComponent(id)
+                xhr.open("GET", '/delete?' + param, true)
+                xhr.send();
+                window.location.reload()
+            }
+        );
+            document.querySelectorAll("#tdD").forEach(
+                function(value){
+                    value.parentNode.className = value.innerText
+                    if(value.innerText == "table-danger"){
+                        value.parentNode.setAttribute("data-toggle", "tooltip")
+                        value.parentNode.setAttribute("data-placement", "bottom")
+                        value.parentNode.setAttribute("title", mgs[value.parentNode.children[2].textContent])
+                    }
+                }
+            );
+    }
+    );
+</script>
+<script>
+    $(document).ready(function(){
+        var info;
+        $('body').mousemove(function(e){
+            if (info !==e.target){
+                // console.log(e.target);
+                info =e.target;
+            }
+        });
+        $('.table tr').hover(function(){
+            $(this).addClass('hover');
+        }, function() {
+            $(this).removeClass('hover');
+        });
+
+        $('.table tr').click(function(){
+            $('.table tr').removeClass('activeTableTab');
+            $(this).addClass('activeTableTab');
+
+            if($(this).children('td').eq(1).attr('id') == info.id){
+                if ($(this).children('td').eq(1).children('input').is(':checked')) {
+                    console.log("check")
+                    let xhr = new XMLHttpRequest();
+                    let param = 'id=' + encodeURIComponent(id)
+                    xhr.open("GET", '/delete?' + param, true)
+                    xhr.send();
+                    $(this).children('td').eq(1).children('input').prop('checked', false)
+                }
+            else {
+                    console.log("check")
+                    $(this).children('td').eq(1).children('input').prop('checked', true)
+                }
+
+            }
+
+
+
+        });
+        $('#getreport').click(
+            function () {
+                $('#Ids').val($('.activeTableTab').children('td').eq(2).text());
+                $('#Car').val($('.activeTableTab').children('td').eq(4).text());
+                $('#PlaceOfLoading').val($('.activeTableTab').children('td').eq(5).text());
+                $('#PlaceOfDelivery').val($('.activeTableTab').children('td').eq(6).text());
+                $('#ShipmentStart').val($('.activeTableTab').children('td').eq(7).text().split(" ")[0]);
+                $('#ShipmentEnd').val($('.activeTableTab').children('td').eq(8).text().split(" ")[0]);
+                $('#NDS').val($('.activeTableTab').children('td').eq(11).text());
+            }
+        );
+
+        $("#ShipmentStart").change(
+            function () {
+                $("#ShipmentEnd").attr('min',$("#ShipmentStart").val())
+            }
+        );
+
+        let errorCOL = document.querySelector(".error_col")
+
+
+    });
+</script>
+</body>
+</html>
