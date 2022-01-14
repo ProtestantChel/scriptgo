@@ -127,7 +127,7 @@
                     <tbody>
                     <tr data-th-each="row : ${rows}">
                         <td id="tdD" style="display: none;">[[${row.getColCheck()}]]</td>
-                        <td id="tdCheck"><input type="checkbox" class="form-check-input" id="CheckOne" style="margin-right: 5px;"></td>
+                        <td id="tdCheck"><input type="checkbox" class="form-check-input" id="CheckOne" style="margin-right: 5px;" data-th-checked="${row.getInputCheck()}"></td>
                         <td>[[${row.getId()}]]</td>
                         <td>[[${row.getNumTask()}]]</td>
                         <td>[[${row.getCar()}]]</td>
@@ -285,16 +285,21 @@
             $(this).addClass('activeTableTab');
 
             if($(this).children('td').eq(1).attr('id') == info.id){
+
                 if ($(this).children('td').eq(1).children('input').is(':checked')) {
-                    console.log("check")
+                    let id = $(this).children('td').eq(2).text()
                     let xhr = new XMLHttpRequest();
-                    let param = 'id=' + encodeURIComponent(id)
-                    xhr.open("GET", '/delete?' + param, true)
+                    let param = 'id=' + encodeURIComponent(id) + "&ck=" + encodeURIComponent(1553)
+                    xhr.open("GET", '/check?' + param, true)
                     xhr.send();
                     $(this).children('td').eq(1).children('input').prop('checked', false)
                 }
-            else {
-                    console.log("check")
+                else {
+                    let id = $(this).children('td').eq(2).text()
+                    let xhr = new XMLHttpRequest();
+                    let param = 'id=' + encodeURIComponent(id) + "&ck=" + encodeURIComponent(1550)
+                    xhr.open("GET", '/check?' + param, true)
+                    xhr.send();
                     $(this).children('td').eq(1).children('input').prop('checked', true)
                 }
 

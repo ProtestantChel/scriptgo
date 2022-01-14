@@ -23,6 +23,7 @@ public class DataBaseLite {
     private List<String> ErrorList;
     private Map<Integer, String> ErrorsCol;
     private List<String> jErr;
+    private boolean inputCheck;
 
     public List<String> getjErr() {
         List<String> l = new ArrayList<>();
@@ -109,16 +110,30 @@ public class DataBaseLite {
     }
 
     public String getColCheck() { return colCheck; }
+    public boolean getInputCheck(){return inputCheck;}
 
     public void setColCheck(String colCheck) {
-        if(colCheck.equals("1551")) colCheck = "table-success";
-        else {
-            if (colCheck.equals("1552")) colCheck = "table-danger";
-            else colCheck = "";
+        switch (colCheck){
+            case "1550":{
+                setInputCheck(colCheck);
+                colCheck = "";
+                break;
+            }
+            case "1551": colCheck = "table-success";
+            break;
+            case "1552": colCheck = "table-danger";
+            break;
+            default: colCheck = "";
         }
         this.colCheck = colCheck;
     }
 
+    public void setInputCheck(String inputCheck) {
+        if(inputCheck.equals("1553")) this.inputCheck = false;
+        else {
+            this.inputCheck = true;
+        }
+    }
 
     public int getNDS() { return NDS; }
 

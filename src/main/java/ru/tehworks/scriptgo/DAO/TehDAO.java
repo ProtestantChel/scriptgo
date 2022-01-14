@@ -88,7 +88,9 @@ public class TehDAO {
                 dataBaseLite.setColCheck(resultSet.getString("COL_CHECK"));
                 dataBaseLite.setNumTask(resultSet.getString("NumTask"));
                 dataBaseLite.setNDS(resultSet.getInt("SummInNDS"));
+                dataBaseLite.setInputCheck(resultSet.getString("COL_CHECK"));
                 dataBaseLites.add(dataBaseLite);
+                System.out.println(dataBaseLite.getInputCheck());
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -188,7 +190,7 @@ public class TehDAO {
     public ResultSet getListQuery(){
         try {
             Statement statement = connection.createStatement();
-            String SQL = "SELECT id, car, placeOfLoading, placeOfDelivery, shipmentStart, shipmentEnd, loading, unloading, SummInNDS  FROM request WHERE COL_CHECK = 1550";
+            String SQL = "SELECT id, car, placeOfLoading, placeOfDelivery, shipmentStart, shipmentEnd, loading, unloading, SummInNDS  FROM request WHERE COL_CHECK = 1550 or COL_CHECK = 1553";
             ResultSet resultSet = statement.executeQuery(SQL);
             return resultSet;
         } catch (SQLException throwables) {
@@ -246,9 +248,9 @@ public class TehDAO {
             throwables.printStackTrace();
         }
     }
-    public void searchActive(Integer id, String check){
+    public void searchActive(String id, String check){
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement("UPDATE request set COL_CHECK = ?, NumTask = ? WHERE id=" + id);
+            PreparedStatement preparedStatement = connection.prepareStatement("UPDATE request set COL_CHECK = ? WHERE id=" + Integer.parseInt(id));
             preparedStatement.setString(1, check);
             preparedStatement.executeUpdate();
         } catch (SQLException throwables) {

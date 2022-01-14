@@ -30,6 +30,11 @@ public class MainController {
         tehDAO.delete(id);
         return "redirect:/";
     }
+    @GetMapping("/check")
+    public String check(@RequestParam("id") String id, @RequestParam("ck") String ck){
+        tehDAO.searchActive(id,ck);
+        return "redirect:/";
+    }
 
     @PostMapping()
     public String create(@ModelAttribute("dataBaseLite") DataBaseLite dataBaseLite){
