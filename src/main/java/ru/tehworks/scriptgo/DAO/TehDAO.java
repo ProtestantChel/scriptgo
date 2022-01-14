@@ -260,12 +260,12 @@ public class TehDAO {
 
 
 
-//    @Scheduled(cron = "${cron.expression}")
-//    public void getCron() throws ParseException, InterruptedException {
-//        MainSelenium selenium = new MainSelenium();
-//        selenium.getHtml(url, user, password, mailHost,
-//                mailFromEmail, mailToEmail, mailUser,
-//                mailPassword, mailPort, mailSmtpAuth);
-//    }
+    @Scheduled(cron = "${cron.expression}")
+    public void getCron() throws ParseException, InterruptedException {
+        MainSelenium selenium = new MainSelenium();
+        selenium.getHtml(url, user, password, mailHost,
+                mailFromEmail, mailToEmail, mailUser,
+                mailPassword, mailPort, mailSmtpAuth);
+    }
 
 }
