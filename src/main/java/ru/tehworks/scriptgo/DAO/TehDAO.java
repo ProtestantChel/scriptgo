@@ -213,10 +213,10 @@ public class TehDAO {
     }
 
     public void insertQuery(Integer id, String str){
-        PreparedStatement preparedStatement = null;
         try {
-            preparedStatement = connection.prepareStatement("INSERT INTO error_list (ErrorText,Time,id) VALUES (?,(SELECT datetime('now','+05:00'),?)");
+            PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO error_list (ErrorText,Time,id) VALUES (?,(SELECT datetime('now','+05:00')),?)");
             DateFormat formatd = new SimpleDateFormat("dd.MM.yyyy hh:mm");
+            if(id == null) id = 599999995;
             if (id == 599999995) {
                 preparedStatement.setString(1, formatd.format(new Date()) + " " + str);
                 preparedStatement.setString(2, "0");
@@ -252,24 +252,23 @@ public class TehDAO {
     }
     public void searchActive(String id, String check){
         try {
-            PreparedStatement preparedStatement = null;
             switch (check){
                 case "1550": {
-                    preparedStatement = connection.prepareStatement("UPDATE request set COL_CHECK = ?, NumTask = ? WHERE id=" + Integer.parseInt(id) + " and COL_CHECK != 1552");
+                    PreparedStatement preparedStatement = connection.prepareStatement("UPDATE request set COL_CHECK = ?, NumTask = ? WHERE id=" + Integer.parseInt(id) + " and COL_CHECK != 1552");
                     preparedStatement.setString(1, check);
                     preparedStatement.setString(2, "");
                     preparedStatement.executeUpdate();
                     break;
                 }
                 case "1551": {
-                    preparedStatement = connection.prepareStatement("INSERT INTO request (car, placeOfLoading, placeOfDelivery, shipmentStart, shipmentEnd, loading, unloading, Date, COL_CHECK, SummInNDS) SELECT car, placeOfLoading, placeOfDelivery, shipmentStart, shipmentEnd, loading, unloading, (SELECT date('now')), 1550, SummInNDS FROM request WHERE id=" + Integer.parseInt(id) + " and COL_CHECK != 1552");
+                    PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO request (car, placeOfLoading, placeOfDelivery, shipmentStart, shipmentEnd, loading, unloading, Date, COL_CHECK, SummInNDS) SELECT car, placeOfLoading, placeOfDelivery, shipmentStart, shipmentEnd, loading, unloading, (SELECT date('now')), 1550, SummInNDS FROM request WHERE id=" + Integer.parseInt(id) + " and COL_CHECK != 1552");
                     preparedStatement.executeUpdate();
                     preparedStatement = connection.prepareStatement("DELETE FROM request WHERE id=" + Integer.parseInt(id) + " and COL_CHECK != 1552");
                     preparedStatement.executeUpdate();
                     break;
                 }
                 case "1553": {
-                    preparedStatement = connection.prepareStatement("UPDATE request set COL_CHECK = ? WHERE id=" + Integer.parseInt(id)  + " and COL_CHECK != 1552");
+                    PreparedStatement preparedStatement = connection.prepareStatement("UPDATE request set COL_CHECK = ? WHERE id=" + Integer.parseInt(id)  + " and COL_CHECK != 1552");
                     preparedStatement.setString(1, check);
                     preparedStatement.executeUpdate();
                     break;

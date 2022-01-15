@@ -157,13 +157,15 @@ public class MainSelenium {
                         WebElement jGrowlMessage = driver.findElement(By.xpath("//div[@class='jGrowl-message']"));
                         webDriverWait.until(ExpectedConditions.visibilityOf(jGrowlMessage));
                         if (jGrowlMessage.isDisplayed()) {
-                            tehDAO.insertQuery(getId(),jGrowlMessage.getText());
+                            tehDAO.insertQuery(599999995,jGrowlMessage.getText());
                             driver.close();
+                            driver.quit();
                         }
                     } catch (NoSuchElementException ex) {
                         ex.printStackTrace();
                         driver.close();
-                    }
+                        driver.quit();
+                     }
                 }
 
 
@@ -231,7 +233,7 @@ public class MainSelenium {
                                 Date tdDate = formatd.parse(tdList.get(a[2]).getText());
                                 if (
                                         //&& checkElement(tdList.get(a[6]),"img")
-                                        !list.contains(tdList.get(a[5]).getText()) && (con != getId()) && checkElement(tdList.get(a[6]),"img")
+                                        !list.contains(tdList.get(a[5]).getText()) && (con != getId())
                                                 && (tdList.get(a[0]).getText().equalsIgnoreCase(getPlaceOfLoading())
                                                 && tdList.get(a[1]).getText().equalsIgnoreCase(getPlaceOfDelivery())
                                                 && ((getShipmentStart() != "" || getShipmentEnd() != "") && (tdDate.getTime() >= dateStart.getTime() && tdDate.getTime() <= dateEnd.getTime()))
@@ -360,6 +362,7 @@ public class MainSelenium {
                                     jse.executeScript("arguments[0].click()", uiClose);
                                     tehDAO.updateSuccessQuery(getId(), list.get(list.size()-1));
                                     listSend.add("Создана заявка №" + list.get(list.size()-1) + " для машины, место погрузки - "+ getPlaceOfLoading() + ", место доставки - " + getPlaceOfDelivery() + ", cумма - " + getNDS() + " (Поле №" + getId() + ").");
+                                    Thread.sleep(3000);
                                 }else {
                                     if (!list.contains(tdList.get(a[5]).getText()))
                                         list.add(tdList.get(a[5]).getText());
