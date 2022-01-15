@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>ru.tehworks</groupId>
 	<artifactId>scriptgo</artifactId>
-	<version>0.0.2</version>
+	<version>0.0.3</version>
 	<name>scriptgo</name>
 	<description>Search the site transport.tn.ru</description>
 	<properties>

@@ -71,7 +71,7 @@ public class TehDAO {
         List <DataBaseLite> dataBaseLites = new ArrayList<>();
         try {
             Statement statement = connection.createStatement();
-            String SQL = "SELECT * FROM request";
+            String SQL = "SELECT * FROM request ORDER BY id DESC";
             ResultSet resultSet = statement.executeQuery(SQL);
 
             while (resultSet.next()){
@@ -90,7 +90,6 @@ public class TehDAO {
                 dataBaseLite.setNDS(resultSet.getInt("SummInNDS"));
                 dataBaseLite.setInputCheck(resultSet.getString("COL_CHECK"));
                 dataBaseLites.add(dataBaseLite);
-                System.out.println(dataBaseLite.getInputCheck());
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -126,7 +125,10 @@ public class TehDAO {
                 preparedStatement.setString(2, dataBaseLite.getPlaceOfLoading().trim());
                 preparedStatement.setString(3, dataBaseLite.getPlaceOfDelivery().trim());
                 preparedStatement.setString(4, dataBaseLite.getShipmentStart().trim() + " 00:00");
-                preparedStatement.setString(5, dataBaseLite.getShipmentEnd().trim() + " 23:59");
+                if (dataBaseLite.getShipmentEnd().trim().equals(""))
+                    preparedStatement.setString(5, dataBaseLite.getShipmentEnd().trim());
+                else
+                    preparedStatement.setString(5, dataBaseLite.getShipmentEnd().trim() + " 23:59");
                 preparedStatement.setString(6, dataBaseLite.getLoading().trim());
                 preparedStatement.setString(7, dataBaseLite.getUnloading().trim());
                 preparedStatement.setInt(8, dataBaseLite.getNDS());
@@ -202,7 +204,7 @@ public class TehDAO {
 
     public void deleteQuery(){
         try {
-            PreparedStatement prStatement = connection.prepareStatement("DELETE FROM error_list WHERE Time <= (SELECT date('now','-4 '));");
+            PreparedStatement prStatement = connection.prepareStatement("DELETE FROM error_list WHERE Time <= (SELECT datetime('now','+05:00','-12 hours'))");
             prStatement.executeUpdate();
         } catch (SQLException throwables) {
             jErr.add("Ошибка опдключения к базе данных (deleteQuery)");
@@ -213,7 +215,7 @@ public class TehDAO {
     public void insertQuery(Integer id, String str){
         PreparedStatement preparedStatement = null;
         try {
-            preparedStatement = connection.prepareStatement("INSERT INTO error_list (ErrorText,Time,id) VALUES (?,(SELECT date('now')),?)");
+            preparedStatement = connection.prepareStatement("INSERT INTO error_list (ErrorText,Time,id) VALUES (?,(SELECT datetime('now','+05:00'),?)");
             DateFormat formatd = new SimpleDateFormat("dd.MM.yyyy hh:mm");
             if (id == 599999995) {
                 preparedStatement.setString(1, formatd.format(new Date()) + " " + str);
@@ -250,9 +252,29 @@ public class TehDAO {
     }
     public void searchActive(String id, String check){
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement("UPDATE request set COL_CHECK = ? WHERE id=" + Integer.parseInt(id));
-            preparedStatement.setString(1, check);
-            preparedStatement.executeUpdate();
+            PreparedStatement preparedStatement = null;
+            switch (check){
+                case "1550": {
+                    preparedStatement = connection.prepareStatement("UPDATE request set COL_CHECK = ?, NumTask = ? WHERE id=" + Integer.parseInt(id) + " and COL_CHECK != 1552");
+                    preparedStatement.setString(1, check);
+                    preparedStatement.setString(2, "");
+                    preparedStatement.executeUpdate();
+                    break;
+                }
+                case "1551": {
+                    preparedStatement = connection.prepareStatement("INSERT INTO request (car, placeOfLoading, placeOfDelivery, shipmentStart, shipmentEnd, loading, unloading, Date, COL_CHECK, SummInNDS) SELECT car, placeOfLoading, placeOfDelivery, shipmentStart, shipmentEnd, loading, unloading, (SELECT date('now')), 1550, SummInNDS FROM request WHERE id=" + Integer.parseInt(id) + " and COL_CHECK != 1552");
+                    preparedStatement.executeUpdate();
+                    preparedStatement = connection.prepareStatement("DELETE FROM request WHERE id=" + Integer.parseInt(id) + " and COL_CHECK != 1552");
+                    preparedStatement.executeUpdate();
+                    break;
+                }
+                case "1553": {
+                    preparedStatement = connection.prepareStatement("UPDATE request set COL_CHECK = ? WHERE id=" + Integer.parseInt(id)  + " and COL_CHECK != 1552");
+                    preparedStatement.setString(1, check);
+                    preparedStatement.executeUpdate();
+                    break;
+                }
+            }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -260,12 +282,12 @@ public class TehDAO {
 
 
 
-    @Scheduled(cron = "${cron.expression}")
-    public void getCron() throws ParseException, InterruptedException {
-        MainSelenium selenium = new MainSelenium();
-        selenium.getHtml(url, user, password, mailHost,
-                mailFromEmail, mailToEmail, mailUser,
-                mailPassword, mailPort, mailSmtpAuth);
-    }
+//    @Scheduled(cron = "${cron.expression}")
+//    public void getCron() throws ParseException, InterruptedException {
+//        MainSelenium selenium = new MainSelenium();
+//        selenium.getHtml(url, user, password, mailHost,
+//                mailFromEmail, mailToEmail, mailUser,
+//                mailPassword, mailPort, mailSmtpAuth);
+//    }
 
 }

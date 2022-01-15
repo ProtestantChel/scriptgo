@@ -19,6 +19,7 @@ public class DataBaseLite {
     private String unloading;
     private String colCheck;
     private int NDS;
+    private String checkNum;
     private String numTask;
     private List<String> ErrorList;
     private Map<Integer, String> ErrorsCol;
@@ -113,6 +114,7 @@ public class DataBaseLite {
     public boolean getInputCheck(){return inputCheck;}
 
     public void setColCheck(String colCheck) {
+        this.checkNum = colCheck;
         switch (colCheck){
             case "1550":{
                 setInputCheck(colCheck);
@@ -129,9 +131,20 @@ public class DataBaseLite {
     }
 
     public void setInputCheck(String inputCheck) {
-        if(inputCheck.equals("1553")) this.inputCheck = false;
-        else {
+        this.checkNum = inputCheck;
+        if(inputCheck.equals("1550")) {
             this.inputCheck = true;
+        }
+        else {
+            this.inputCheck = false;
+        }
+    }
+    public boolean disableEL(){
+        if(this.checkNum.equals("1552")){
+            return true;
+        }
+        else {
+            return false;
         }
     }
 
