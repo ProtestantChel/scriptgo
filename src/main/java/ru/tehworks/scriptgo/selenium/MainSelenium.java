@@ -156,7 +156,6 @@ public class MainSelenium {
                         WebDriverWait webDriverWait = new WebDriverWait(driver, 10);
                         WebElement jGrowlMessage = driver.findElement(By.xpath("//div[@class='jGrowl-message']"));
                         webDriverWait.until(ExpectedConditions.visibilityOf(jGrowlMessage));
-                        System.out.println(jGrowlMessage.getText());
                         if (jGrowlMessage.isDisplayed()) {
                             tehDAO.insertQuery(getId(),jGrowlMessage.getText());
                             driver.close();
@@ -229,11 +228,7 @@ public class MainSelenium {
                                     check = false;
                                     break;
                                 }
-                                System.out.println("-----index----- " + a[2] + " = " + tdList.size());
                                 Date tdDate = formatd.parse(tdList.get(a[2]).getText());
-                                System.out.println(tdList.get(a[0]).getText() + " = " + getPlaceOfLoading());
-                                System.out.println(tdList.get(a[1]).getText() + " = " + getPlaceOfDelivery());
-                                System.out.println(getShipmentStart() + " = " + tdDate.getTime());
                                 if (
                                         //&& checkElement(tdList.get(a[6]),"img")
                                         !list.contains(tdList.get(a[5]).getText()) && (con != getId()) && checkElement(tdList.get(a[6]),"img")
@@ -265,7 +260,6 @@ public class MainSelenium {
                                                 && tdList.get(a[3]).getText().equalsIgnoreCase(getLoading())
                                                 && (!tdList.get(a[4]).getText().isEmpty() && tdList.get(a[4]).getText().equalsIgnoreCase(getUnloading())))
                                         ) {
-                                    System.out.println("------ ------ " + tdList.get(a[5]).getText() + " " + getId() + " " + getCar() + " " + getPlaceOfLoading() + " " + getPlaceOfDelivery());
                                     list.add(tdList.get(a[5]).getText());
                                     JavascriptExecutor jse = (JavascriptExecutor) driver;
                                     jse.executeScript("arguments[0].click()", tr);
@@ -290,7 +284,6 @@ public class MainSelenium {
                                     try {
                                         webDriverWaitTable.until(ExpectedConditions.visibilityOf(uiAutocomplete));
                                     }catch (org.openqa.selenium.TimeoutException ex){
-                                        System.out.println("Ya uiAutocomplete");
                                         WebElement uiClose = uiDialog.findElement(By.className("ui-dialog-titlebar-close"));
                                         jse.executeScript("arguments[0].click()", uiClose);
                                         tehDAO.updateErrorQuery(getId());
@@ -378,7 +371,6 @@ public class MainSelenium {
 
                         if (list.size() >= trList.size()) {
                             check = false;
-                            System.out.println("0-0--- check = " + check);
                             break;
 
                         }
@@ -423,7 +415,6 @@ public class MainSelenium {
                     props.put("mail.smtps.auth", mailSmtpAuth.trim());
                     Session session = Session.getInstance(props, null);
                     Message msg = new MimeMessage(session);
-                    System.out.println("mailFrom = " + mailFromEmail.trim());
                     msg.setFrom(new InternetAddress(mailFromEmail.trim()));
                     msg.setRecipients(Message.RecipientType.CC,
                             InternetAddress.parse(mailToEmail.trim(), false));
