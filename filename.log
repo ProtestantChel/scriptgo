@@ -1,0 +1,76 @@
+2022-02-01 11:09:20.970  INFO 15000 --- [main] r.tehworks.scriptgo.ScriptgoApplication  : Starting ScriptgoApplication using Java 11.0.12 on maratlocal with PID 15000 (C:\Users\adminchel\IdeaProjects\scriptgo\target\classes started by adminchel in C:\Users\adminchel\IdeaProjects\scriptgo)
+2022-02-01 11:09:20.974  INFO 15000 --- [main] r.tehworks.scriptgo.ScriptgoApplication  : No active profile set, falling back to default profiles: default
+2022-02-01 11:09:22.342  INFO 15000 --- [main] org.quartz.impl.StdSchedulerFactory      : Using default implementation for ThreadExecutor
+2022-02-01 11:09:22.352  INFO 15000 --- [main] org.quartz.core.SchedulerSignalerImpl    : Initialized Scheduler Signaller of type: class org.quartz.core.SchedulerSignalerImpl
+2022-02-01 11:09:22.352  INFO 15000 --- [main] org.quartz.core.QuartzScheduler          : Quartz Scheduler v.2.3.2 created.
+2022-02-01 11:09:22.353  INFO 15000 --- [main] org.quartz.simpl.RAMJobStore             : RAMJobStore initialized.
+2022-02-01 11:09:22.355  INFO 15000 --- [main] org.quartz.core.QuartzScheduler          : Scheduler meta-data: Quartz Scheduler (v2.3.2) 'quartzScheduler' with instanceId 'NON_CLUSTERED'
+  Scheduler class: 'org.quartz.core.QuartzScheduler' - running locally.
+  NOT STARTED.
+  Currently in standby mode.
+  Number of jobs executed: 0
+  Using thread pool 'org.quartz.simpl.SimpleThreadPool' - with 10 threads.
+  Using job-store 'org.quartz.simpl.RAMJobStore' - which does not support persistence. and is not clustered.
+
+2022-02-01 11:09:22.355  INFO 15000 --- [main] org.quartz.impl.StdSchedulerFactory      : Quartz scheduler 'quartzScheduler' initialized from an externally provided properties instance.
+2022-02-01 11:09:22.355  INFO 15000 --- [main] org.quartz.impl.StdSchedulerFactory      : Quartz scheduler version: 2.3.2
+2022-02-01 11:09:22.355  INFO 15000 --- [main] org.quartz.core.QuartzScheduler          : JobFactory set to: org.springframework.scheduling.quartz.SpringBeanJobFactory@436bd4df
+2022-02-01 11:09:23.637  INFO 15000 --- [main] o.s.b.web.embedded.netty.NettyWebServer  : Netty started on port 7810
+2022-02-01 11:09:23.640  INFO 15000 --- [main] o.s.s.quartz.SchedulerFactoryBean        : Starting Quartz Scheduler now
+2022-02-01 11:09:23.641  INFO 15000 --- [main] org.quartz.core.QuartzScheduler          : Scheduler quartzScheduler_$_NON_CLUSTERED started.
+2022-02-01 11:09:23.653  INFO 15000 --- [main] r.tehworks.scriptgo.ScriptgoApplication  : Started ScriptgoApplication in 3.665 seconds (JVM running for 6.251)
+2022-02-01 11:09:50.035  INFO 15000 --- [SpringApplicationShutdownHook] org.quartz.core.QuartzScheduler          : Scheduler quartzScheduler_$_NON_CLUSTERED paused.
+2022-02-01 11:09:50.056  INFO 15000 --- [SpringApplicationShutdownHook] o.s.s.quartz.SchedulerFactoryBean        : Shutting down Quartz Scheduler
+2022-02-01 11:09:50.062  INFO 15000 --- [SpringApplicationShutdownHook] org.quartz.core.QuartzScheduler          : Scheduler quartzScheduler_$_NON_CLUSTERED shutting down.
+2022-02-01 11:09:50.065  INFO 15000 --- [SpringApplicationShutdownHook] org.quartz.core.QuartzScheduler          : Scheduler quartzScheduler_$_NON_CLUSTERED paused.
+2022-02-01 11:09:50.066  INFO 15000 --- [SpringApplicationShutdownHook] org.quartz.core.QuartzScheduler          : Scheduler quartzScheduler_$_NON_CLUSTERED shutdown complete.
+2022-02-01 11:10:35.339 ERROR 3512 --- [main] o.s.b.d.LoggingFailureAnalysisReporter   : 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Failed to bind properties under 'logging.level.org.springframework' to org.springframework.boot.logging.LogLevel:
+
+    Property: logging.level.org.springframework
+    Value: NO
+    Origin: class path resource [application.properties] - 1:35
+    Reason: failed to convert java.lang.String to org.springframework.boot.logging.LogLevel (caused by java.lang.IllegalArgumentException: No enum constant org.springframework.boot.logging.LogLevel.NO)
+
+Action:
+
+Update your application's configuration. The following values are valid:
+
+    DEBUG
+    ERROR
+    FATAL
+    INFO
+    OFF
+    TRACE
+    WARN
+
+2022-02-01 11:10:59.226  INFO 15172 --- [main] r.tehworks.scriptgo.ScriptgoApplication  : Starting ScriptgoApplication using Java 11.0.12 on maratlocal with PID 15172 (C:\Users\adminchel\IdeaProjects\scriptgo\target\classes started by adminchel in C:\Users\adminchel\IdeaProjects\scriptgo)
+2022-02-01 11:10:59.229  INFO 15172 --- [main] r.tehworks.scriptgo.ScriptgoApplication  : No active profile set, falling back to default profiles: default
+2022-02-01 11:11:00.764  INFO 15172 --- [main] org.quartz.impl.StdSchedulerFactory      : Using default implementation for ThreadExecutor
+2022-02-01 11:11:00.774  INFO 15172 --- [main] org.quartz.core.SchedulerSignalerImpl    : Initialized Scheduler Signaller of type: class org.quartz.core.SchedulerSignalerImpl
+2022-02-01 11:11:00.775  INFO 15172 --- [main] org.quartz.core.QuartzScheduler          : Quartz Scheduler v.2.3.2 created.
+2022-02-01 11:11:00.776  INFO 15172 --- [main] org.quartz.simpl.RAMJobStore             : RAMJobStore initialized.
+2022-02-01 11:11:00.777  INFO 15172 --- [main] org.quartz.core.QuartzScheduler          : Scheduler meta-data: Quartz Scheduler (v2.3.2) 'quartzScheduler' with instanceId 'NON_CLUSTERED'
+  Scheduler class: 'org.quartz.core.QuartzScheduler' - running locally.
+  NOT STARTED.
+  Currently in standby mode.
+  Number of jobs executed: 0
+  Using thread pool 'org.quartz.simpl.SimpleThreadPool' - with 10 threads.
+  Using job-store 'org.quartz.simpl.RAMJobStore' - which does not support persistence. and is not clustered.
+
+2022-02-01 11:11:00.777  INFO 15172 --- [main] org.quartz.impl.StdSchedulerFactory      : Quartz scheduler 'quartzScheduler' initialized from an externally provided properties instance.
+2022-02-01 11:11:00.778  INFO 15172 --- [main] org.quartz.impl.StdSchedulerFactory      : Quartz scheduler version: 2.3.2
+2022-02-01 11:11:00.778  INFO 15172 --- [main] org.quartz.core.QuartzScheduler          : JobFactory set to: org.springframework.scheduling.quartz.SpringBeanJobFactory@2b0b7e5a
+2022-02-01 11:11:01.718  INFO 15172 --- [main] org.quartz.core.QuartzScheduler          : Scheduler quartzScheduler_$_NON_CLUSTERED started.
+2022-02-01 11:11:01.728  INFO 15172 --- [main] r.tehworks.scriptgo.ScriptgoApplication  : Started ScriptgoApplication in 3.643 seconds (JVM running for 5.65)
+2022-02-01 11:11:08.659  INFO 15172 --- [SpringApplicationShutdownHook] org.quartz.core.QuartzScheduler          : Scheduler quartzScheduler_$_NON_CLUSTERED paused.
+2022-02-01 11:11:08.680  INFO 15172 --- [SpringApplicationShutdownHook] org.quartz.core.QuartzScheduler          : Scheduler quartzScheduler_$_NON_CLUSTERED shutting down.
+2022-02-01 11:11:08.681  INFO 15172 --- [SpringApplicationShutdownHook] org.quartz.core.QuartzScheduler          : Scheduler quartzScheduler_$_NON_CLUSTERED paused.
+2022-02-01 11:11:08.691  INFO 15172 --- [SpringApplicationShutdownHook] org.quartz.core.QuartzScheduler          : Scheduler quartzScheduler_$_NON_CLUSTERED shutdown complete.

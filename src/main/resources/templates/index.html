@@ -5,6 +5,15 @@
     <link data-th-href="@{/css/bootstrap.min.css}" rel="stylesheet">
     <script data-th-src="@{/css/jquery-3.6.0.min.js}"></script>
     <title>ScriptTransport</title>
+    <script type="text/javascript">
+        function validateForm() {
+            if(/[@#$%^&*(){}_=%+/<№>\\?!"'\]\[.]/.test(document.querySelector("#Loading").value)){
+                $("#Loading").addClass("is-invalid")
+                return  false
+            }
+            return true;
+        }
+    </script>
 
 </head>
 <body>
@@ -25,18 +34,40 @@
                                 </li>
                             </ul>
                         </div>
+                        <div id="blockChecks" style="display: flex; float: right">
+                            <div style="margin-right: 20px;">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="" id="checkOK" style="border-color: #FFFFFF" data-th-checked="${checkOK}">
+                                    <label class="form-check-label" for="checkOK" style="color: #FFFFFF">
+                                        Подтверждать заявки
+                                    </label>
+                                </div>
+                            </div>
+                            <div >
+                                <div class="form-check form-switch" >
+                                    <label class="form-check-label" for="searchCheck" style="color: #FFFFFF">
+                                        Поиск заявок
+                                    </label>
+                                    <input type="checkbox" class="form-check-input" id="searchCheck" style="border-color: #FFFFFF" data-th-checked="${search}">
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </nav>
             </div>
+            <div class="row bg-danger" id="errorDriver" style="display: none; border-radius: 3px; color: #fff; height: 50px">
+                <span data-th-utext="${errorDriver}"></span>
+            </div>
             <div class="row" style="margin-top: 10px">
-                <form method="POST" action="/" data-th-object="${dataBaseLite}">
-                    <div class="row char row-cols-5">
+                <form method="POST" action="/" data-th-object="${dataBaseLite}" onsubmit="return validateForm()">
+                    <div class="row char row-cols-4">
                         <div class="col" style="display: none;">
                             <input type="text" class="form-control form-control-sm" style="display: none;" data-th-field="*{{id}}" id = "Ids" >
                         </div>
                         <div class="col">
                             <label for="Car">Машина</label>
-                            <input type="text" class="form-control form-control-sm" data-th-field="*{{car}}" id = "Car" required>
+                            <input type="text" class="form-control form-control-sm"  data-th-field="*{{car}}" id = "Car" required>
+                                <div class="invalid-feedback">Поле неправильно заполнено</div>
                         </div>
                         <div class="col">
                             <label for="PlaceOfLoading">Место погрузки</label>
@@ -44,16 +75,13 @@
                         </div>
                         <div class="col">
                             <label for="PlaceOfDelivery">Место доставки</label>
-                            <input type="text" class="form-control form-control-sm" data-th-field="*{{placeOfDelivery}}" id = "PlaceOfDelivery" required>
+                            <input type="text" class="form-control form-control-sm" data-th-field="*{{placeOfDelivery}}" id = "PlaceOfDelivery">
                         </div>
 
                         <div class="col">
-                            <label for="Loading">Погрузка</label>
+                            <label for="Loading">Погрузка/Разгрузка</label>
                             <input type="text" class="form-control form-control-sm" data-th-field="*{{loading}}" id = "Loading">
-                        </div>
-                        <div class="col">
-                            <label for="Unloading">Разгрузка</label>
-                            <input type="text" class="form-control form-control-sm" data-th-field="*{{unloading}}" id = "Unloading">
+                            <div class="invalid-feedback">Поле не должно содержать спец.символов кроме ","</div>
                         </div>
                         <div class="col">
                             <label for="NDS">Сумма с НДС</label>
@@ -61,13 +89,12 @@
                         </div>
                         <div class="col">
                             <label for="ShipmentStart">Отгрузка: от</label>
-                            <input type="date" class="form-control form-control-sm" data-th-field="*{{shipmentStart}}" id = "ShipmentStart" required>
+                            <input type="datetime-local" class="form-control form-control-sm" data-th-field="*{{shipmentStart}}" id = "ShipmentStart" required>
                         </div>
                         <div class="col">
                             <label for="ShipmentEnd">до</label>
                             <input type="date" class="form-control form-control-sm" data-th-field="*{{shipmentEnd}}" id="ShipmentEnd">
                         </div>
-                        <div class="col"></div>
                         <div class="col align-self-end">
                              <button type="button" id="getreport" class="btn btn-light btn-primary" style="border: 1px solid #dee2e6;" >
                                 <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
@@ -99,6 +126,10 @@
                 </form>
             </div>
             <div class="row" style="margin-top: 10px;" >
+                <div id="tbodyLoading">
+                    <div class="spinner-border text-primary" role="status" style="width: 30px; height: 30px; position: absolute; left: 50%; top: 50%;">
+                    </div>
+                </div>
                 <table class="table table-sm table-bordered">
                     <thead>
                     <tr class="table-primary">
@@ -109,8 +140,7 @@
                         <th scope="col" rowspan="2">Место погрузки</th>
                         <th scope="col" rowspan="2">Место доставки</th>
                         <th scope="col" colspan="2">Отгрузка</th>
-                        <th scope="col" rowspan="2">Погрузка</th>
-                        <th scope="col" rowspan="2">Разгрузка</th>
+                        <th scope="col" rowspan="2">Погрузка/Разгрузка</th>
                         <th scope="col" rowspan="2">Сумма с НДС</th>
                     </tr>
                     <tr class="table-primary">
@@ -119,6 +149,7 @@
                     </tr>
                     </thead>
                     <tbody>
+                    </div>
                     <tr data-th-each="row : ${rows}">
                         <td id="tdD" style="display: none;">[[${row.getColCheck()}]]</td>
                         <td id="tdCheck"><input type="checkbox" class="form-check-input" id="CheckOne" style="margin-right: 5px;" data-th-checked="${row.getInputCheck()}" data-th-disabled="${row.disableEL()}"></td>
@@ -130,7 +161,6 @@
                         <td>[[${row.getShipmentStart()}]]</td>
                         <td>[[${row.getShipmentEnd()}]]</td>
                         <td>[[${row.getLoading()}]]</td>
-                        <td>[[${row.getUnloading()}]]</td>
                         <td>[[${row.getNDS()}]]</td>
                     </tr>
                     </tbody>
@@ -138,6 +168,7 @@
             </div>
             <div class="row">
                 <div class="col" style="margin-top: 10px;margin-bottom: 10px;">
+                    <div id="errorsList">
                     <div data-th-each="error: ${errors.getjErr()}">
                         <div class="alert alert-danger error_col" role="alert" style="padding: 5px 5px 5px 5px; margin-bottom: 5px;">
                             [[${error}]]
@@ -145,6 +176,7 @@
                                 <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
                             </svg></a>
                         </div>
+                    </div>
                     </div>
                 </div>
             </div>
@@ -205,7 +237,15 @@
         border-right: 3px solid #0d6efd;
         width: auto;
     }
-
+    #tbodyLoading {
+        display: none;
+        position: absolute;
+        background-color: #c3dcf7a8;
+        z-index: 1;
+    }
+    #tbodyLoading > div{
+        z-index: 2;
+    }
     @media (max-width: 1400px) {
         .bi{
             width: 16px;
@@ -238,7 +278,8 @@
 <script data-th-inline="javascript">
     $(document).ready(function() {
         var mgs = /*[[${errors.getError()}]]*/
-
+        if($("span",$("#errorDriver")).text() != "") $("#errorDriver").show();
+        else $("#errorDriver").hide();
         $('#getbtnNone').click(
             function () {
                 let id = $('.activeTableTab').children('td').eq(2).text()
@@ -263,8 +304,32 @@
     );
 </script>
 <script>
+function shows(){
+    document.querySelector("#tbodyLoading").style.top = $("tbody").offset().top + "px"
+    document.querySelector("#tbodyLoading").style.width = document.querySelector("tbody").offsetWidth + "px"
+    document.querySelector("#tbodyLoading").style.height = document.querySelector("tbody").offsetHeight + "px"
+    $("#tbodyLoading").show()
+    $("#errorsList").hide()
+    $("#tbodyLoading").fadeOut(1000)
+
+    $('tbody').load(
+        '/',
+        'html',
+        function(response){
+            $('tbody').replaceWith($('tbody',$(response)))
+            $('#errorsList').empty()
+            $('#errorsList').replaceWith($('#errorsList',$(response)))
+            $('#searchCheck').replaceWith($('#searchCheck',$(response)))
+            $('#errorDriver').replaceWith($('#errorDriver',$(response)))
+            if($("span",$("#errorDriver")).text() != "") $("#errorDriver").show();
+            else $("#errorDriver").hide();
+        }
+    );
+
+}
 
     $(document).ready(function(){
+        setTimeout('shows()',30000);
         var info;
         $('body').mousemove(function(e){
             if (info !==e.target){
@@ -310,15 +375,50 @@
 
             }
         });
+        $('#searchCheck').click(function () {
+            if($('#searchCheck').is(':checked')){
+                let xhr = new XMLHttpRequest();
+                let param = "ck=" + encodeURIComponent(1001)
+                xhr.open("GET", '/checksearch?' + param, true)
+                xhr.send();
+
+            }
+            else{
+                let xhr = new XMLHttpRequest();
+                let param = "ck=" + encodeURIComponent(1002)
+                xhr.open("GET", '/checksearch?' + param, true)
+                xhr.send();
+
+            }
+        });
+        $('#checkOK').click(function () {
+            if($('#checkOK').is(':checked')){
+                let xhr = new XMLHttpRequest();
+                let param = "ck=" + encodeURIComponent(1003)
+                xhr.open("GET", '/checksearch?' + param, true)
+                xhr.send();
+
+            }
+            else{
+                let xhr = new XMLHttpRequest();
+                let param = "ck=" + encodeURIComponent(1004)
+                xhr.open("GET", '/checksearch?' + param, true)
+                xhr.send();
+
+            }
+        });
         $('#getreport').click(
             function () {
-                $('#Ids').val($('.activeTableTab').children('td').eq(2).text());
-                $('#Car').val($('.activeTableTab').children('td').eq(4).text());
-                $('#PlaceOfLoading').val($('.activeTableTab').children('td').eq(5).text());
-                $('#PlaceOfDelivery').val($('.activeTableTab').children('td').eq(6).text());
-                $('#ShipmentStart').val($('.activeTableTab').children('td').eq(7).text().split(" ")[0]);
-                $('#ShipmentEnd').val($('.activeTableTab').children('td').eq(8).text().split(" ")[0]);
-                $('#NDS').val($('.activeTableTab').children('td').eq(11).text());
+                if(!$('.activeTableTab').hasClass('table-success')) {
+                    $('#Ids').val($('.activeTableTab').children('td').eq(2).text());
+                    $('#Car').val($('.activeTableTab').children('td').eq(4).text());
+                    $('#PlaceOfLoading').val($('.activeTableTab').children('td').eq(5).text());
+                    $('#PlaceOfDelivery').val($('.activeTableTab').children('td').eq(6).text());
+                    $('#ShipmentStart').val($('.activeTableTab').children('td').eq(7).text().split(" ")[0]);
+                    $('#ShipmentEnd').val($('.activeTableTab').children('td').eq(8).text().split(" ")[0]);
+                    $('#Loading').val($('.activeTableTab').children('td').eq(9).text());
+                    $('#NDS').val($('.activeTableTab').children('td').eq(10).text());
+                }
             }
         );
 

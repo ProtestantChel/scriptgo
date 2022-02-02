@@ -1,0 +1,4 @@
+2022-02-02 07:58:15.383  INFO 10832 --- [main] r.tehworks.scriptgo.ScriptgoApplication  : Starting ScriptgoApplication using Java 11.0.12 on maratlocal with PID 10832 (C:\Users\adminchel\IdeaProjects\scriptgo\target\classes started by adminchel in C:\Users\adminchel\IdeaProjects\scriptgo)
+2022-02-02 07:58:15.422  INFO 10832 --- [main] r.tehworks.scriptgo.ScriptgoApplication  : No active profile set, falling back to default profiles: default
+2022-02-02 07:58:18.322  INFO 10832 --- [main] o.s.b.web.embedded.netty.NettyWebServer  : Netty started on port 7810
+2022-02-02 07:58:18.335  INFO 10832 --- [main] r.tehworks.scriptgo.ScriptgoApplication  : Started ScriptgoApplication in 3.903 seconds (JVM running for 6.822)

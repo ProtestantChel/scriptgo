@@ -1,14 +1,15 @@
 package ru.tehworks.scriptgo.DAO;
 
 
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.WebDriverException;
+import org.openqa.selenium.remote.UnreachableBrowserException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import ru.tehworks.scriptgo.model.DataBaseLite;
 import ru.tehworks.scriptgo.selenium.MainSelenium;
 
-import java.io.*;
 import java.sql.*;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -44,11 +45,16 @@ public class TehDAO {
     private String mailSmtpAuth;
 
     private List<String> jErr;
-
+    private String searchCheck = "1002";
+    private String checkOK = "1004";
+    private String errorDriver = "";
+    private MainSelenium selenium;
+    final static Logger logger = LoggerFactory.getLogger(MainSelenium.class);
     private static final String URL = "jdbc:sqlite:" + System.getProperty("user.dir") +"\\db\\tehno.db";
     private static Connection connection;
 
     {
+        selenium = new MainSelenium();
         jErr = new ArrayList<>();
     }
 
@@ -105,36 +111,44 @@ public class TehDAO {
             ResultSet resultSet = statement.executeQuery(SQL);
             if(resultSet.next()) {
 
-                PreparedStatement preparedStatement = connection.prepareStatement("UPDATE request set car = ?, placeOfLoading = ?, placeOfDelivery = ?, shipmentStart = ?, shipmentEnd = ?, loading = ?, unloading = ?, Date = (SELECT date('now')), COL_CHECK = 1550, SummInNDS = ? WHERE id=" + dataBaseLite.getId());
+                PreparedStatement preparedStatement = connection.prepareStatement("UPDATE request set car = ?, placeOfLoading = ?, placeOfDelivery = ?, shipmentStart = ?, shipmentEnd = ?, loading = ?, Date = (SELECT date('now')), COL_CHECK = 1550, NumTask = ?, SummInNDS = ? WHERE id=" + dataBaseLite.getId());
 
                 preparedStatement.setString(1, dataBaseLite.getCar().trim());
                 preparedStatement.setString(2, dataBaseLite.getPlaceOfLoading().trim());
+                if(dataBaseLite.getPlaceOfDelivery() == null){
+                    dataBaseLite.setPlaceOfDelivery("");
+                }
                 preparedStatement.setString(3, dataBaseLite.getPlaceOfDelivery().trim());
-                preparedStatement.setString(4, dataBaseLite.getShipmentStart().trim() + " 00:00");
-                preparedStatement.setString(5, dataBaseLite.getShipmentEnd().trim() + " 23:59");
+                preparedStatement.setString(4, dataBaseLite.getShipmentStart().trim().replace("T", " "));
+                if (dataBaseLite.getShipmentEnd().trim().equals(""))
+                    preparedStatement.setString(5, dataBaseLite.getShipmentEnd().trim());
+                else
+                    preparedStatement.setString(5, dataBaseLite.getShipmentEnd().trim() + " 23:59");
                 preparedStatement.setString(6, dataBaseLite.getLoading().trim());
-                preparedStatement.setString(7, dataBaseLite.getUnloading().trim());
+                preparedStatement.setString(7, "");
                 preparedStatement.setInt(8, dataBaseLite.getNDS());
 
                 preparedStatement.executeUpdate();
             }
             else {
 
-                PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO request (car, placeOfLoading, placeOfDelivery, shipmentStart, shipmentEnd, loading, unloading, Date, COL_CHECK, SummInNDS) VALUES (?,?,?,?,?,?,?,(SELECT date('now')),1550,?)");
+                PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO request (car, placeOfLoading, placeOfDelivery, shipmentStart, shipmentEnd, loading, Date, COL_CHECK, SummInNDS) VALUES (?,?,?,?,?,?,(SELECT date('now')),1550,?)");
                 preparedStatement.setString(1, dataBaseLite.getCar().trim());
                 preparedStatement.setString(2, dataBaseLite.getPlaceOfLoading().trim());
+                if(dataBaseLite.getPlaceOfDelivery() == null){
+                    dataBaseLite.setPlaceOfDelivery("");
+                }
                 preparedStatement.setString(3, dataBaseLite.getPlaceOfDelivery().trim());
-                preparedStatement.setString(4, dataBaseLite.getShipmentStart().trim() + " 00:00");
+                preparedStatement.setString(4, dataBaseLite.getShipmentStart().trim().replace("T", " "));
                 if (dataBaseLite.getShipmentEnd().trim().equals(""))
                     preparedStatement.setString(5, dataBaseLite.getShipmentEnd().trim());
                 else
                     preparedStatement.setString(5, dataBaseLite.getShipmentEnd().trim() + " 23:59");
                 preparedStatement.setString(6, dataBaseLite.getLoading().trim());
-                preparedStatement.setString(7, dataBaseLite.getUnloading().trim());
-                preparedStatement.setInt(8, dataBaseLite.getNDS());
+                preparedStatement.setInt(7, dataBaseLite.getNDS());
                 preparedStatement.executeUpdate();
             }
-        } catch (SQLException throwables) {
+        } catch (SQLException | NullPointerException throwables) {
             jErr.add("Ошибка опдключения к базе данных (save)");
             dataBaseLite.setjErr(jErr);
             throwables.printStackTrace();
@@ -279,14 +293,70 @@ public class TehDAO {
         }
     }
 
-
-
-    @Scheduled(cron = "${cron.expression}")
-    public void getCron() throws ParseException, InterruptedException {
-        MainSelenium selenium = new MainSelenium();
-        selenium.getHtml(url, user, password, mailHost,
-                mailFromEmail, mailToEmail, mailUser,
-                mailPassword, mailPort, mailSmtpAuth);
+    public String getSearchCheck() {
+        return searchCheck;
     }
+    public String getCheckOK() { return checkOK; }
+
+    public boolean checkSearch(){
+        if(getSearchCheck().equals("1001")){
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    public boolean checkOK(){
+        if(getCheckOK().equals("1003")){
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    public void setCheckOK(String checkOK) {
+        this.checkOK = checkOK;
+        if (checkOK.equalsIgnoreCase("1003"))
+            selenium.setCheckOK(true);
+        if (checkOK.equalsIgnoreCase("1004"))
+            selenium.setCheckOK(false);
+    }
+    public void setSearchCheck(String searchCheck) {
+        this.searchCheck = searchCheck;
+        if (searchCheck.equalsIgnoreCase("1001")) {
+            selenium.setCheckSearch(true);
+            try {
+                setErrorDriver("");
+                selenium.getHtml(url, user, password, mailHost,
+                        mailFromEmail, mailToEmail, mailUser,
+                        mailPassword, mailPort, mailSmtpAuth);
+            } catch (ParseException | NullPointerException |InterruptedException e) {
+                selenium.setCheckSearch(false);
+                selenium.closeDriver();
+                this.searchCheck = "1002";
+                e.printStackTrace();
+            }catch (UnreachableBrowserException unreachableBrowserException){
+                setErrorDriver((new Date() + " Неудалось загрузить страницу входа в систему"));
+                selenium.setCheckSearch(false);
+                selenium.closeDriver();
+                this.searchCheck = "1002";
+            }catch (WebDriverException noSuchWindowException){
+                logger.info("GoogleChrome не отвечает. Поробуем запустить повторно.");
+                selenium.closeDriver();
+                setSearchCheck(this.searchCheck);
+            }
+
+        }
+        else selenium.setCheckSearch(false);
+    }
+
+    public String getErrorDriver() {
+        return errorDriver;
+    }
+
+    public void setErrorDriver(String errorDriver) {
+        this.errorDriver = errorDriver;
+    }
+
 
 }
