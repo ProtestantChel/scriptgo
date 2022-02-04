@@ -323,6 +323,10 @@ public class TehDAO {
     }
     public void setSearchCheck(String searchCheck) {
         this.searchCheck = searchCheck;
+        if (searchCheck.equalsIgnoreCase("1009")){
+            this.searchCheck = "1002";
+            selenium.setCheckSearch(false);
+        }
         if (searchCheck.equalsIgnoreCase("1001")) {
             selenium.setCheckSearch(true);
             try {
@@ -331,23 +335,26 @@ public class TehDAO {
                         mailFromEmail, mailToEmail, mailUser,
                         mailPassword, mailPort, mailSmtpAuth);
             } catch (ParseException | NullPointerException |InterruptedException e) {
-                selenium.setCheckSearch(false);
-                selenium.closeDriver();
-                this.searchCheck = "1002";
-                e.printStackTrace();
-            }catch (UnreachableBrowserException unreachableBrowserException){
-                setErrorDriver((new Date() + " Неудалось загрузить страницу входа в систему"));
-                selenium.setCheckSearch(false);
-                selenium.closeDriver();
-                this.searchCheck = "1002";
-            }catch (WebDriverException noSuchWindowException){
-                logger.info("GoogleChrome не отвечает. Поробуем запустить повторно.");
                 selenium.closeDriver();
                 setSearchCheck(this.searchCheck);
+                e.printStackTrace();
+            }catch (UnreachableBrowserException unreachableBrowserException){
+                setErrorDriver((new Date()) + " Неудалось загрузить страницу входа в систему");
+                selenium.closeDriver();
+                setSearchCheck(this.searchCheck);
+            }catch (WebDriverException noSuchWindowException){
+                logger.info("GoogleChrome не отвечает. Проверьте установлен ли GoogleChrome и запустите поиск заявок снова.");
+                setErrorDriver((new Date()) + " - GoogleChrome не отвечает. Проверьте установлен ли GoogleChrome на компьютере и запустите поиск заявок снова.");
+                noSuchWindowException.printStackTrace();
+                selenium.setCheckSearch(false);
+                this.searchCheck = "1002";
+                selenium.closeDriver();
             }
 
         }
-        else selenium.setCheckSearch(false);
+        else {
+            selenium.setCheckSearch(false);
+        }
     }
 
     public String getErrorDriver() {

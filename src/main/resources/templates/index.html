@@ -89,7 +89,7 @@
                         </div>
                         <div class="col">
                             <label for="ShipmentStart">Отгрузка: от</label>
-                            <input type="datetime-local" class="form-control form-control-sm" data-th-field="*{{shipmentStart}}" id = "ShipmentStart" required>
+                            <input type="datetime-local" class="form-control form-control-sm" value="2017-06-01T08:30" data-th-field="*{{shipmentStart}}" id = "ShipmentStart" required>
                         </div>
                         <div class="col">
                             <label for="ShipmentEnd">до</label>
@@ -149,7 +149,6 @@
                     </tr>
                     </thead>
                     <tbody>
-                    </div>
                     <tr data-th-each="row : ${rows}">
                         <td id="tdD" style="display: none;">[[${row.getColCheck()}]]</td>
                         <td id="tdCheck"><input type="checkbox" class="form-check-input" id="CheckOne" style="margin-right: 5px;" data-th-checked="${row.getInputCheck()}" data-th-disabled="${row.disableEL()}"></td>
@@ -182,6 +181,7 @@
             </div>
         </div>
     </div>
+<div id="dateText" style="display: none"></div>
 </div>
 <style type="text/css">
     .table {
@@ -304,14 +304,15 @@
     );
 </script>
 <script>
+
 function shows(){
     document.querySelector("#tbodyLoading").style.top = $("tbody").offset().top + "px"
     document.querySelector("#tbodyLoading").style.width = document.querySelector("tbody").offsetWidth + "px"
     document.querySelector("#tbodyLoading").style.height = document.querySelector("tbody").offsetHeight + "px"
     $("#tbodyLoading").show()
     $("#errorsList").hide()
+    $("#dateText").text(document.querySelector("#ShipmentStart").value)
     $("#tbodyLoading").fadeOut(1000)
-
     $('tbody').load(
         '/',
         'html',
@@ -327,8 +328,12 @@ function shows(){
     );
 
 }
+var now = new Date()
+now.setMinutes(now.getMinutes() - now.getTimezoneOffset())
+$("#dateText").text(now.toISOString().split("T")[0] + "T00:00")
 
     $(document).ready(function(){
+        document.querySelector("#ShipmentStart").value = $("#dateText").text();
         setTimeout('shows()',30000);
         var info;
         $('body').mousemove(function(e){
@@ -414,8 +419,8 @@ function shows(){
                     $('#Car').val($('.activeTableTab').children('td').eq(4).text());
                     $('#PlaceOfLoading').val($('.activeTableTab').children('td').eq(5).text());
                     $('#PlaceOfDelivery').val($('.activeTableTab').children('td').eq(6).text());
-                    $('#ShipmentStart').val($('.activeTableTab').children('td').eq(7).text().split(" ")[0]);
-                    $('#ShipmentEnd').val($('.activeTableTab').children('td').eq(8).text().split(" ")[0]);
+                    $('#ShipmentStart').val($('.activeTableTab').children('td').eq(7).text().split(" ")[0].split(".")[2] + "-" + $('.activeTableTab').children('td').eq(7).text().split(" ")[0].split(".")[1] + "-" + $('.activeTableTab').children('td').eq(7).text().split(" ")[0].split(".")[0] + "T" + $('.activeTableTab').children('td').eq(7).text().split(" ")[1]);
+                    $('#ShipmentEnd').val($('.activeTableTab').children('td').eq(8).text().split(" ")[0].split(".")[2] + "-" + $('.activeTableTab').children('td').eq(8).text().split(" ")[0].split(".")[1] + "-" + $('.activeTableTab').children('td').eq(8).text().split(" ")[0].split(".")[0]);
                     $('#Loading').val($('.activeTableTab').children('td').eq(9).text());
                     $('#NDS').val($('.activeTableTab').children('td').eq(10).text());
                 }
@@ -424,7 +429,7 @@ function shows(){
 
         $("#ShipmentStart").change(
             function () {
-                $("#ShipmentEnd").attr('min',$("#ShipmentStart").val())
+                $("#ShipmentEnd").attr('min',$("#ShipmentStart").val().split("T")[0])
             }
         );
 

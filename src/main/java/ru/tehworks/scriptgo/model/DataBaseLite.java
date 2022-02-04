@@ -1,9 +1,11 @@
 package ru.tehworks.scriptgo.model;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 /**
  * @author Marat Sadretdinov
@@ -79,7 +81,16 @@ public class DataBaseLite {
     }
 
     public String getShipmentStart() {
-        return shipmentStart;
+        if (shipmentStart != null)
+            try {
+                Date formaShipment = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(shipmentStart);
+                String newShipment= new SimpleDateFormat("dd.MM.yyyy HH:mm").format(formaShipment);
+                return newShipment;
+            } catch (ParseException e) {
+                return shipmentStart;
+            }
+        else return shipmentStart;
+
     }
 
     public void setShipmentStart(String shipmentStart) {
@@ -87,7 +98,16 @@ public class DataBaseLite {
     }
 
     public String getShipmentEnd() {
-        return shipmentEnd;
+        if (shipmentEnd != null)
+            try {
+                Date formaShipment = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(shipmentEnd);
+                String newShipment= new SimpleDateFormat("dd.MM.yyyy HH:mm").format(formaShipment);
+                return newShipment;
+            } catch (ParseException e) {
+                return shipmentEnd;
+            }
+        else return shipmentEnd;
+
     }
 
     public void setShipmentEnd(String shipmentEnd) {

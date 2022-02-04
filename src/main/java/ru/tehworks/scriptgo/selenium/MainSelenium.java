@@ -127,8 +127,19 @@ public class MainSelenium {
 
     public void setNDS(String NDS) { this.NDS = NDS; }
     public void closeDriver(){
-        driver.close();
-        driver.quit();
+        try {
+            driver.close();
+            driver.quit();
+        } catch (NullPointerException | WebDriverException e)
+        {
+            try {
+                Runtime.getRuntime().exec("taskkill /F /IM chromedriver.exe");
+            } catch (IOException ioException) {
+                logger.info("Драйвер не удалось закрыть");
+            }
+            setCheckSearch(false);
+        }
+
     }
     private boolean checkElement(WebElement webElement, String str){
         try {
@@ -160,21 +171,25 @@ public class MainSelenium {
         return false;
     }
 
-    private boolean editWebElement(WebDriver driver, List<WebElement> tdList, WebElement tr, TehDAO tehDAO, List<String> list, List<String> listSend, Integer id){
+    private boolean editWebElement(WebDriver driver, List<WebElement> tdList, WebElement tr, TehDAO tehDAO, List<String> list, List<String> listSend, Integer id, Integer stavka){
+        JavascriptExecutor jse = (JavascriptExecutor) driver;
+        try{
+            jse.executeScript("arguments[0].click()", driver.findElement(By.xpath("//div[@aria-labelledby='ui-dialog-title-dogovor' and contains(@style,'display: block;')]//a[@role='button']")));
+        }catch (StaleElementReferenceException | NoSuchElementException exception){
 
+        }
         if (list.size() >= 20) {
             list.remove(0);
         }
 
 
-        JavascriptExecutor jse = (JavascriptExecutor) driver;
         jse.executeScript("arguments[0].click()", tr);
         jse.executeScript("arguments[0].click()", tr);
 
         WebDriverWait webDriverWaitTable = new WebDriverWait(driver, 10);
-
         WebElement uiDialog = driver.findElement(By.xpath("//div[@aria-labelledby='ui-dialog-title-dogovor']"));
         webDriverWaitTable.until(ExpectedConditions.visibilityOf(uiDialog));
+
 
         String dov = id < 10 ? "0" + id : id.toString();
 
@@ -187,8 +202,7 @@ public class MainSelenium {
         try {
             webDriverWaitTable.until(ExpectedConditions.visibilityOf(uiAutocomplete));
         }catch (org.openqa.selenium.TimeoutException ex){
-            WebElement uiClose = uiDialog.findElement(By.className("ui-dialog-titlebar-close"));
-            jse.executeScript("arguments[0].click()", uiClose);
+            jse.executeScript("arguments[0].click()", uiDialog.findElement(By.xpath("//a[@role='button']")));
             driver.navigate().refresh();
             try {
                 Thread.sleep(1000);
@@ -211,8 +225,13 @@ public class MainSelenium {
             WebElement clickFraht = webDriverWaitTable.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//button[@class='ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only']//span[text()='Фрахт']")));
             jse.executeScript("arguments[0].click()", clickFraht);
         }catch (TimeoutException | NoSuchElementException e){
-            WebElement uiClose = uiDialog.findElement(By.className("ui-dialog-titlebar-close"));
-            jse.executeScript("arguments[0].click()", uiClose);
+            logger.info("!!!Я не тыкнул на ФРАХ, но что-то не так!!!");
+            try{
+                jse.executeScript("arguments[0].click()", driver.findElement(By.xpath("//div[@aria-labelledby='ui-dialog-title-c_price' and contains(@style,'display: block;')]//a[@role='button']")));
+                jse.executeScript("arguments[0].click()", driver.findElement(By.xpath("//div[@aria-labelledby='ui-dialog-title-dogovor' and contains(@style,'display: block;')]//a[@role='button']")));
+            }catch (StaleElementReferenceException | JavascriptException | NoSuchElementException exception){
+
+            }
             driver.navigate().refresh();
             try {
                 Thread.sleep(1000);
@@ -225,26 +244,31 @@ public class MainSelenium {
             }
             return false;
         }
+        logger.info("Перед IF getNDS " + getNDS() + " ставка = " + stavka);
         if(getNDS().equals("0")){
-            setNDS(Integer.toString(Integer.parseInt(tdList.get(13).getText()) / 100 * 75));
+            setNDS(Integer.toString(stavka / 100 * 75));
             logger.info((new Date()) + getNDS());
         }
+        try {
         WebElement uiDialogNDS = driver.findElement(By.xpath("//div[@aria-labelledby='ui-dialog-title-c_price']"));
         webDriverWaitTable.until(ExpectedConditions.visibilityOf(uiDialogNDS));
+        logger.info("Дошел до окна прайс");
         WebElement c_amount = driver.findElement(By.id("c_amount"));
         jse.executeScript("arguments[0].value = ''",c_amount);
+        System.out.println(getNDS());
         c_amount.sendKeys(getNDS());
-        try {
-            jse.executeScript("SetCPrice(null)");
-            jse.executeScript("arguments[0].querySelector('.ui-button-text').click()",uiDialogNDS);
-        }catch (JavascriptException javascriptException){
+        logger.info("Окна прайса буду скоро нажимать ОК");
+        jse.executeScript("SetCPrice(null)");
+        jse.executeScript("arguments[0].querySelector('.ui-button-text').click()",uiDialogNDS);
+        logger.info("Окна прайса Нажал ОК");
+        }catch (IndexOutOfBoundsException | StaleElementReferenceException | JavascriptException | NoSuchElementException exception){
             logger.info("Сбой в работе сайта. Не правильно выставил сумму");
             driver.navigate().refresh();
             return false;
         }
 
 
-        try{
+        try {
             driver.switchTo().alert();
             String msg = driver.switchTo().alert().getText();
             tehDAO.insertQuery(getId(), msg);
@@ -257,10 +281,10 @@ public class MainSelenium {
             }
             try {
                 jse.executeScript("$(\"#chkcnt\").empty();");
-            }catch (JavascriptException ex){
+            } catch (JavascriptException ex) {
                 logger.info((new Date()) + " #chkcnt not found");
             }
-            logger.info("----- alert ui-autocomplete false --- ");
+            logger.info("В алерте ошибка");
             return false;
         }catch (NoAlertPresentException | UnhandledAlertException ex){
 
@@ -270,6 +294,7 @@ public class MainSelenium {
 
         try{
             driver.switchTo().alert().accept();
+            logger.info("В алерте accept ошибка");
         }catch (NoAlertPresentException ex){
 
         }
@@ -292,12 +317,16 @@ public class MainSelenium {
         }
         if(isCheckOK()) {
             logger.info("Применить ОК");
-//            jse.executeScript("var link = document.querySelector(\"div[aria-labelledby='ui-dialog-title-dlgterminal']\").querySelectorAll('.ui-button-text'); " + "link = Array.from( link ).filter( e => (/ОК/i).test( e.textContent ) ); " + "link[0].click();");
+            jse.executeScript("var link = document.querySelector(\"div[aria-labelledby='ui-dialog-title-dlgterminal']\").querySelectorAll('.ui-button-text'); " + "link = Array.from( link ).filter( e => (/ОК/i).test( e.textContent ) ); " + "link[0].click();");
         } else
             jse.executeScript("var link = document.querySelector(\"div[aria-labelledby='ui-dialog-title-dlgterminal']\").querySelectorAll('.ui-button-text'); " + "link = Array.from( link ).filter( e => (/Отмена/i).test( e.textContent ) ); " + "link[0].click();");
         list.add(tdList.get(2).getText());
-        WebElement uiClose = uiDialog.findElement(By.className("ui-dialog-titlebar-close"));
-        jse.executeScript("arguments[0].click()", uiClose);
+        try{
+            jse.executeScript("arguments[0].click()", driver.findElement(By.xpath("//div[@aria-labelledby='ui-dialog-title-dogovor' and contains(@style,'display: block;')]//a[@role='button']")));
+            System.out.println("!!!Я закрыл диалог!!!");
+        }catch (StaleElementReferenceException | JavascriptException | NoSuchElementException exception){
+            System.out.println("!!!Я не закрыл диалог!!!");
+        }
         tehDAO.updateSuccessQuery(getId(), list.get(list.size()-1));
         listSend.add("Создана заявка №" + list.get(list.size()-1) + " для машины " + getCar() + ", место погрузки - " + getPlaceOfLoading() + ", место доставки - " + getPlaceOfDelivery() + ", cумма - " + getNDS() + " (Поле №" + getId() + ").");
         return true;
@@ -345,7 +374,6 @@ public class MainSelenium {
                 js.executeScript("arguments[0].click()", clickLogin);
                 Thread.sleep(1000);
 
-                logger.info((new Date()).toString());
                 if(driver.getCurrentUrl().contains("login")) {
                      try {
                          WebDriverWait webDriverWait = new WebDriverWait(driver, 10);
@@ -372,40 +400,43 @@ public class MainSelenium {
 
             //------ Остановка таймера обновления таблицы ------
             try {
-                js.executeScript("$(\"#chkcnt\").empty();");
+                js.executeScript("$(\"#chkcnt\").remove();");
             }catch (JavascriptException ex){
                 logger.info((new Date()) + " #chkcnt not found");
             }
             while (isCheckSearch()) {
+                ResultSet resultSet = tehDAO.getListQuery();
                 try {
-                    js.executeScript("$(\"#chkcnt\").empty();");
+                    js.executeScript("$(\"#chkcnt\").remove();");
                 }catch (JavascriptException ex){
                     logger.info((new Date()) + " #chkcnt not found");
                 }
                 tehDAO.deleteQuery();
-                ResultSet resultSet = tehDAO.getListQuery(); //Получения данных с БД
+                 //Получения данных с БД
                 //------ Получение таблицы и работа над ней
                 try {
                     int a[] = new int[7];
                     WebDriverWait webDriverWait = new WebDriverWait(driver, 20);
-                    WebElement treeTable = webDriverWait.until(ExpectedConditions.presenceOfElementLocated(By.id("treeTable")));
-                    WebElement tbody = treeTable.findElement(By.tagName("tbody"));
-                    List<WebElement> trList = webDriverWait.until(ExpectedConditions.visibilityOfAllElements(tbody.findElements(By.tagName("tr"))));
-                    WebElement thead = treeTable.findElement(By.tagName("thead"));
-                    WebElement trHead = thead.findElement(By.tagName("tr"));
-                    List<WebElement> thHead = trHead.findElements(By.tagName("th"));
-                    for (int i = 0; i < thHead.size(); i++) {
-                        if (thHead.get(i).getText().equalsIgnoreCase("Место погрузки")) a[0] = i;
-                        if (thHead.get(i).getText().equalsIgnoreCase("Место доставки")) a[1] = i;
-                        if (thHead.get(i).getText().equalsIgnoreCase("Отгрузка")) a[2] = i;
-                        if (thHead.get(i).getText().equalsIgnoreCase("Погрузка")) a[3] = i;
-                        if (thHead.get(i).getText().equalsIgnoreCase("Разгрузка")) a[4] = i;
-                        if (thHead.get(i).getText().equalsIgnoreCase("Номер")) a[5] = i;
-                        if (thHead.get(i).getText().equalsIgnoreCase("Моя")) a[6] = i;
-                    }
-
-                    //------ Перебор строк с данными из БД
                     while (resultSet.next()) {
+                        WebElement treeTable = webDriverWait.until(ExpectedConditions.presenceOfElementLocated(By.id("treeTable")));
+                        WebElement tbody = treeTable.findElement(By.tagName("tbody"));
+                        List<WebElement> trList = tbody.findElements(By.tagName("tr"));
+                        WebElement thead = treeTable.findElement(By.tagName("thead"));
+                        WebElement trHead = thead.findElement(By.tagName("tr"));
+                        List<WebElement> thHead = trHead.findElements(By.tagName("th"));
+                        for (int i = 0; i < thHead.size(); i++) {
+                            if (thHead.get(i).getText().equalsIgnoreCase("Место погрузки")) a[0] = i;
+                            if (thHead.get(i).getText().equalsIgnoreCase("Место доставки")) a[1] = i;
+                            if (thHead.get(i).getText().equalsIgnoreCase("Отгрузка")) a[2] = i;
+                            if (thHead.get(i).getText().equalsIgnoreCase("Погрузка")) a[3] = i;
+                            if (thHead.get(i).getText().equalsIgnoreCase("Разгрузка")) a[4] = i;
+                            if (thHead.get(i).getText().equalsIgnoreCase("Номер")) a[5] = i;
+                            if (thHead.get(i).getText().equalsIgnoreCase("Моя")) a[6] = i;
+
+                        }
+
+                        //------ Перебор строк с данными из БД
+
                         setId(resultSet.getInt("id"));
                         setCar(resultSet.getString("car"));
                         setPlaceOfLoading(resultSet.getString("placeOfLoading"));
@@ -414,6 +445,7 @@ public class MainSelenium {
                         setShipmentEnd(resultSet.getString("shipmentEnd"));
                         setLoading(resultSet.getString("loading"));
                         setNDS(Integer.toString(resultSet.getInt("SummInNDS")));
+                        System.out.println("ID = " + getId());
 
                         DateFormat formatd = new SimpleDateFormat("dd.MM.yyyy hh:mm");
                         DateFormat formaShipment = new SimpleDateFormat("yyyy-MM-dd hh:mm");
@@ -423,7 +455,8 @@ public class MainSelenium {
                         for (WebElement tr : trList) {
                             try {
                                 List<WebElement> tdList = tr.findElements(By.tagName("td"));
-                                if (tdList.size() < a.length)break;
+
+                                if (tdList.size() < a.length) break;
                                 Date tdDate = formatd.parse(tdList.get(a[2]).getText());
                                 if (
                                         !checkElement(tdList.get(0), "img") && !list.contains(tdList.get(a[5]).getText())
@@ -433,17 +466,27 @@ public class MainSelenium {
                                                 && (tdDate.getTime() >= dateStart.getTime() && tdDate.getTime() <= dateEnd.getTime())
                                                 && (getLoading().equals("") || checkString(getLoading(), tdList.get(a[3]).getText()) && checkString(getLoading(), tdList.get(a[4]).getText())))
                                 ) {
-                                    if (!editWebElement(driver, tdList, tr, tehDAO, list, listSend, getId())) {
+                                    logger.info("\nПараметры поиска\tДействительные значения\n" +
+                                            getPlaceOfLoading() + "\t" + tdList.get(a[0]).getText() + "\n" +
+                                            getPlaceOfDelivery() + "\t" + tdList.get(a[1]).getText() + "\n" +
+                                            dateStart.getTime() + "\t" + tdDate.getTime() + "\n" +
+                                            getLoading() + "\t" + tdList.get(a[3]).getText());
+                                    if (!editWebElement(driver, tdList, tr, tehDAO, list, listSend, getId(), Integer.parseInt(tdList.get(13).getText()))) {
                                         logger.info((new Date()) + "Ошибка в editWebElement");
+                                        driver.navigate().refresh();
                                         break;
                                     }
+                                    break;
                                 }
                             } catch (StaleElementReferenceException | NoSuchElementException | IndexOutOfBoundsException ex) {
+                                ex.printStackTrace();
+                                logger.info("Тут почему-то брейк");
                                 break;
                             }
                         }
                     }
                 } catch (StaleElementReferenceException | NoSuchElementException ex) {
+                    logger.info("Тут пропускаем");
                 }
                 String lineEnd = "";
                 try {
@@ -492,9 +535,10 @@ public class MainSelenium {
                     e.printStackTrace();
                 }
 
-                js.executeScript("Ajax();");
-                Thread.sleep(5000);
 
+//                js.executeScript("Ajax();");
+                Thread.sleep(5000);
+                driver.navigate().refresh();
             }
             driver.close();
             driver.quit();

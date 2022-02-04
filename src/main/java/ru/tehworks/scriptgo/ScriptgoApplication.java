@@ -5,6 +5,7 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
+import ru.tehworks.scriptgo.DAO.TehDAO;
 
 import javax.swing.*;
 import java.awt.*;
@@ -35,6 +36,7 @@ public class ScriptgoApplication {
 		ApplicationArguments args = context.getBean(ApplicationArguments.class);
 
 		Thread thread = new Thread(() -> {
+			context.getBean(TehDAO.class).setSearchCheck("1009");
 			context.close();
 			context = SpringApplication.run(ScriptgoApplication.class, args.getSourceArgs());
 		});
@@ -42,6 +44,7 @@ public class ScriptgoApplication {
 		thread.setDaemon(false);
 		thread.start();
 	}
+
 	private static void setTrayIcon() {
 		if(! SystemTray.isSupported() ) {
 			return;
@@ -52,6 +55,7 @@ public class ScriptgoApplication {
 		item.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				context.getBean(TehDAO.class).setSearchCheck("1009");
 				System.exit(0);
 			}
 		});
