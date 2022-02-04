@@ -5,6 +5,7 @@ db/
 !db/tahno.db
 out/
 chromedriver
+log
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
